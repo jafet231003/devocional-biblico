@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Devo">
+<meta name="theme-color" content="#f3f6fa">
+<title>Devo Diario 🔥</title>
+<style>
+  :root { color-scheme:light; --bg:#f3f6fa; --card:#ffffff; --line:#d5deea; --text:#14213d; --muted:#5f6b7d;
+    --lime:#3f8f4f; --pink:#c0532b; --cyan:#1b8fa6; --orange:#e07a1f; --purple:#1e4d8c; --yellow:#d9a521;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+  html { scroll-padding-top:env(safe-area-inset-top,0px); -webkit-text-size-adjust:100%; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { margin:0; color:var(--text); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; min-height:100vh;
+    background:radial-gradient(circle at 10% 0,rgba(30,77,140,.20),transparent 40%),radial-gradient(circle at 100% 30%,rgba(192,83,43,.12),transparent 40%),radial-gradient(circle at 0 100%,rgba(27,143,166,.16),transparent 40%),var(--bg) fixed; }
+  .page { max-width:820px; margin:0 auto; padding:18px 14px 40px; }
+  header { text-align:center; padding:14px 0 6px; }
+  .tag { display:inline-block; background:var(--yellow); color:#14213d; font-weight:900; font-size:.72rem; letter-spacing:.12em; padding:5px 12px; border-radius:999px; transform:rotate(-3deg); }
+  h1 { margin:10px 0 4px; font-size:clamp(2.2rem,11vw,3.8rem); line-height:1; font-weight:900; letter-spacing:-.02em; text-transform:uppercase;
+    background:linear-gradient(90deg,var(--purple),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  header p { margin:0; color:var(--muted); font-size:1rem; }
+  .prog { margin:16px 0 4px; background:var(--card); border:2px solid var(--line); box-shadow:0 4px 12px rgba(30,77,140,.12); border-radius:16px; padding:12px 14px; }
+  .prog-top { display:flex; justify-content:space-between; font-weight:800; font-size:.85rem; margin-bottom:8px; }
+  .bar { height:12px; background:#e3eaf3; border-radius:999px; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--cyan),var(--purple),var(--orange)); transition:width .4s; }
+  .meta { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .meta label { background:var(--card); border:2px solid var(--line); border-radius:16px; padding:10px 14px; display:flex; flex-direction:column; gap:2px; font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:#1e4d8c; }
+  input, textarea { font:inherit; font-size:16px; color:var(--text); background:transparent; border:0; border-radius:0; -webkit-appearance:none; appearance:none; outline:none; }
+  .meta input { padding:4px 0; font-weight:600; width:100%; }
+  .card { --c:var(--purple); margin-top:14px; background:var(--card); border:2.5px solid var(--c); border-radius:20px; box-shadow:5px 5px 0 var(--c); overflow:hidden; transition:transform .15s; }
+  .card:focus-within { transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--c); }
+  .card > h2, .card > h3 { margin:0; padding:12px 14px 10px; display:flex; align-items:center; gap:8px; color:var(--text); background:color-mix(in srgb,var(--c) 22%,#fff); font-weight:900; text-transform:uppercase; letter-spacing:.03em; }
+  .card > h2 { font-size:1rem; } .card > h3 { font-size:.85rem; flex-wrap:wrap; }
+  .card small { flex-basis:100%; color:var(--muted); text-transform:none; font-weight:500; font-size:.78rem; letter-spacing:0; }
+  .verso { --c:var(--yellow); background:linear-gradient(135deg,#fbefc9,#fff 70%); }
+  .notas { --c:var(--cyan); } .aprendi { --c:var(--lime); }
+  .c1 { --c:var(--yellow); } .c2 { --c:var(--orange); } .c3 { --c:var(--pink); } .c4 { --c:var(--cyan); } .o1 { --c:var(--purple); } .o2 { --c:var(--lime); }
+  .sec { margin:26px 4px 2px; font-size:1.05rem; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+  .sec span { background:var(--pink); color:#fff; padding:3px 10px; border-radius:8px; display:inline-block; transform:rotate(-1.5deg); }
+  .sec.b span { background:var(--purple); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; }
+  textarea { display:block; width:100%; min-height:96px; resize:vertical; padding:12px 14px 14px; line-height:1.5; }
+  .verso textarea { font-size:17px; font-weight:600; min-height:100px; }
+  ::placeholder { color:#9aa5b5; opacity:1; }
+  textarea { padding-top:12px; }
+  .btns { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:30px; }
+  button { color:#fff; border:0; border-radius:14px; padding:14px 28px; min-height:48px; font:inherit; font-size:16px; font-weight:900; cursor:pointer; text-transform:uppercase; letter-spacing:.04em;
+    background:var(--lime); box-shadow:4px 4px 0 #14213d; }
+  button:active { transform:translate(3px,3px); box-shadow:1px 1px 0 #14213d; }
+  button.alt { background:var(--card); color:var(--text); border:2px solid #14213d; box-shadow:4px 4px 0 var(--line); }
+  #estado { text-align:center; color:var(--muted); font-size:.82rem; margin-top:14px; min-height:1em; }
+  @media (max-width:600px) { .grid, .meta { grid-template-columns:1fr; } }
+  .modal { position:fixed; inset:0; z-index:50; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(20,33,61,.6); }
+  .modal.on { display:flex; }
+  .modal-box { position:relative; max-width:420px; width:100%; text-align:center; background:#fff; border:3px solid #14213d; border-radius:24px; box-shadow:8px 8px 0 var(--pink); padding:28px 22px 22px; animation:pop .35s ease-out; }
+  .modal-box .big { font-size:3.2rem; line-height:1; }
+  .modal-box h3 { margin:10px 0 8px; font-size:1.6rem; font-weight:900; text-transform:uppercase; background:linear-gradient(90deg,var(--purple),var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .modal-box p { margin:0 0 6px; line-height:1.5; font-size:1.05rem; }
+  .modal-box .ref { color:var(--muted); font-size:.85rem; font-weight:700; }
+  .modal-box .btns { margin-top:18px; }
+  .conf { position:fixed; top:-30px; z-index:60; font-size:1.5rem; pointer-events:none; animation:caer linear forwards; }
+  @keyframes pop { from { transform:scale(.7); opacity:0; } to { transform:scale(1); opacity:1; } }
+  @keyframes caer { to { transform:translateY(110vh) rotate(360deg); opacity:.8; } }
+  @media (prefers-reduced-motion: reduce) { .modal-box, .conf { animation:none; } .conf { display:none; } }
+  .falta { border-color:#e5484d !important; box-shadow:5px 5px 0 #e5484d !important; animation:vibra .35s; }
+  .meta label.falta { box-shadow:0 0 0 3px #e5484d !important; }
+  .req { color:#e5484d; font-weight:900; }
+  @keyframes vibra { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
+  .meta select { font:inherit; font-size:16px; font-weight:600; color:var(--text); background:transparent; border:0; border-bottom:2px dashed var(--line); padding:5px 0; width:100%; outline:none; border-radius:0; }
+  .meta select:focus, .meta input:focus { border-bottom-color:var(--purple); }
+  .meta2 { grid-template-columns:1fr 1fr !important; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <span class="tag">TU MOMENTO CON DIOS ✨</span>
+    <h1>Devo Diario</h1>
+    <p>Lee. Piensa. Ora. Obedece. 🔥</p>
+    <p style="margin-top:6px;font-size:.85rem">Llena todos los campos para poder guardar tu PDF <span class="req">*</span></p>
+  </header>
+
+  <div class="prog">
+    <div class="prog-top"><span id="ptxt">Tu progreso de hoy</span><span id="pnum">0/13</span></div>
+    <div class="bar"><i id="pbar"></i></div>
+  </div>
+
+  <div class="meta">
+    <label>📖 Libro<select data-k="libro" id="libro"><option value="">Selecciona un libro…</option><optgroup label="Antiguo Testamento"><option value="Génesis" data-c="50">Génesis</option><option value="Éxodo" data-c="40">Éxodo</option><option value="Levítico" data-c="27">Levítico</option><option value="Números" data-c="36">Números</option><option value="Deuteronomio" data-c="34">Deuteronomio</option><option value="Josué" data-c="24">Josué</option><option value="Jueces" data-c="21">Jueces</option><option value="Rut" data-c="4">Rut</option><option value="1 Samuel" data-c="31">1 Samuel</option><option value="2 Samuel" data-c="24">2 Samuel</option><option value="1 Reyes" data-c="22">1 Reyes</option><option value="2 Reyes" data-c="25">2 Reyes</option><option value="1 Crónicas" data-c="29">1 Crónicas</option><option value="2 Crónicas" data-c="36">2 Crónicas</option><option value="Esdras" data-c="10">Esdras</option><option value="Nehemías" data-c="13">Nehemías</option><option value="Ester" data-c="10">Ester</option><option value="Job" data-c="42">Job</option><option value="Salmos" data-c="150">Salmos</option><option value="Proverbios" data-c="31">Proverbios</option><option value="Eclesiastés" data-c="12">Eclesiastés</option><option value="Cantares" data-c="8">Cantares</option><option value="Isaías" data-c="66">Isaías</option><option value="Jeremías" data-c="52">Jeremías</option><option value="Lamentaciones" data-c="5">Lamentaciones</option><option value="Ezequiel" data-c="48">Ezequiel</option><option value="Daniel" data-c="12">Daniel</option><option value="Oseas" data-c="14">Oseas</option><option value="Joel" data-c="3">Joel</option><option value="Amós" data-c="9">Amós</option><option value="Abdías" data-c="1">Abdías</option><option value="Jonás" data-c="4">Jonás</option><option value="Miqueas" data-c="7">Miqueas</option><option value="Nahúm" data-c="3">Nahúm</option><option value="Habacuc" data-c="3">Habacuc</option><option value="Sofonías" data-c="3">Sofonías</option><option value="Hageo" data-c="2">Hageo</option><option value="Zacarías" data-c="14">Zacarías</option><option value="Malaquías" data-c="4">Malaquías</option></optgroup><optgroup label="Nuevo Testamento"><option value="Mateo" data-c="28">Mateo</option><option value="Marcos" data-c="16">Marcos</option><option value="Lucas" data-c="24">Lucas</option><option value="Juan" data-c="21">Juan</option><option value="Hechos" data-c="28">Hechos</option><option value="Romanos" data-c="16">Romanos</option><option value="1 Corintios" data-c="16">1 Corintios</option><option value="2 Corintios" data-c="13">2 Corintios</option><option value="Gálatas" data-c="6">Gálatas</option><option value="Efesios" data-c="6">Efesios</option><option value="Filipenses" data-c="4">Filipenses</option><option value="Colosenses" data-c="4">Colosenses</option><option value="1 Tesalonicenses" data-c="5">1 Tesalonicenses</option><option value="2 Tesalonicenses" data-c="3">2 Tesalonicenses</option><option value="1 Timoteo" data-c="6">1 Timoteo</option><option value="2 Timoteo" data-c="4">2 Timoteo</option><option value="Tito" data-c="3">Tito</option><option value="Filemón" data-c="1">Filemón</option><option value="Hebreos" data-c="13">Hebreos</option><option value="Santiago" data-c="5">Santiago</option><option value="1 Pedro" data-c="5">1 Pedro</option><option value="2 Pedro" data-c="3">2 Pedro</option><option value="1 Juan" data-c="5">1 Juan</option><option value="2 Juan" data-c="1">2 Juan</option><option value="3 Juan" data-c="1">3 Juan</option><option value="Judas" data-c="1">Judas</option><option value="Apocalipsis" data-c="22">Apocalipsis</option></optgroup></select></label>
+    <label>📅 Fecha (automática)<input data-k="fecha" id="fecha" placeholder="DD/MM/AAAA" inputmode="numeric" autocomplete="off"></label>
+  </div>
+
+  <div class="meta meta2">
+    <label>🔢 Capítulo<input data-k="capitulo" id="capitulo" placeholder="Ej. 8" inputmode="numeric" autocomplete="off"></label>
+    <label>✍️ Versículo<input data-k="versiculo" id="versiculo" placeholder="Ej. 28 o 1-3" autocomplete="off"></label>
+  </div>
+
+  <section class="card verso">
+    <h2>📍 Versículo bandera</h2>
+    <textarea data-k="verso" placeholder="El versículo que más te pegó hoy..."></textarea>
+  </section>
+
+  <h2 class="sec"><span>🔍 Reflexión</span></h2>
+  <div class="grid">
+    <section class="card c4"><h3>1. Sobre el mensaje 🎯<small>Idea central del autor</small></h3><textarea data-k="mensaje" placeholder="¿Cuál es la enseñanza principal del autor original?"></textarea></section>
+    <section class="card c2"><h3>2. Sobre el hombre 💔<small>Condición, miedos, necesidad</small></h3><textarea data-k="hombre" placeholder="¿Qué muestra de mi corazón y mis luchas?"></textarea></section>
+    <section class="card c3"><h3>3. Sobre Cristo ✝️<small>Evangelio, esperanza, perdón</small></h3><textarea data-k="cristo" placeholder="¿Cómo apunta este pasaje a Jesús y su obra?"></textarea></section>
+    <section class="card c1"><h3>4. Sobre Dios 👑<small>Carácter, promesas, soberanía</small></h3><textarea data-k="dios" placeholder="¿Qué revela este texto sobre quién es Dios?"></textarea></section>
+  </div>
+
+  <section class="card notas">
+    <h2>📇 Notas extra</h2>
+    <textarea data-k="notas" placeholder="Contexto, palabras clave en el idioma original, textos paralelos..."></textarea>
+  </section>
+
+  <section class="card aprendi">
+    <h2>💡 ¿Qué aprendí para mi vida?</h2>
+    <textarea data-k="aprendi" placeholder="¿Cómo transforma esta verdad mi manera de pensar hoy?"></textarea>
+  </section>
+
+  <h2 class="sec b"><span>👣 A ponerlo en práctica</span></h2>
+  <div class="grid">
+    <section class="card o2"><h3>⚡ Una acción<small>Paso concreto de obediencia</small></h3><textarea data-k="accion" placeholder="Hoy, en respuesta a tu gracia, voy a..."></textarea></section>
+    <section class="card o1"><h3>🙏 Una oración<small>Confesión o gratitud</small></h3><textarea data-k="oracion" placeholder="Señor..."></textarea></section>
+  </div>
+
+  <div class="btns">
+    <button id="pdf">💾 Guardar</button>
+    <button class="alt" id="nuevo">➕ Nuevo día</button>
+  </div>
+  <div id="estado" role="status"></div>
+</div>
+
+<div class="modal" id="fin" role="dialog" aria-modal="true" aria-labelledby="fin-t">
+  <div class="modal-box">
+    <div class="big">🎉</div>
+    <h3 id="fin-t">¡Felicidades!</h3>
+    <p id="fin-msg"></p>
+    <p class="ref" id="fin-ref"></p>
+    <div class="btns">
+      <button class="alt" id="fin-cerrar">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="preg" role="dialog" aria-modal="true" aria-labelledby="preg-t">
+  <div class="modal-box">
+    <div class="big">🌅</div>
+    <h3 id="preg-t">¿Nuevo día?</h3>
+    <p>Se borrará todo lo que escribiste en este devocional.</p>
+    <p class="ref">¿Ya guardaste tu PDF?</p>
+    <div class="btns">
+      <button id="preg-pdf">💾 Guardar PDF primero</button>
+      <button id="preg-si" class="alt">Sí, empezar de nuevo</button>
+      <button id="preg-no" class="alt">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var KEY = 'devocional-diario-v1';
+  var campos = document.querySelectorAll('[data-k]');
+  var estado = document.getElementById('estado');
+  var timer;
+
+  function hoy() {
+    var d = new Date();
+    return ('0'+d.getDate()).slice(-2) + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
+  }
+  function leer() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+  }
+  function guardar() {
+    var data = {};
+    campos.forEach(function (c) { data[c.dataset.k] = c.value; });
+    try { localStorage.setItem(KEY, JSON.stringify(data)); estado.textContent = 'Guardado ✓'; }
+    catch (e) { estado.textContent = 'No se pudo guardar en este navegador'; }
+  }
+
+  var saved = leer();
+  campos.forEach(function (c) {
+    if (saved[c.dataset.k] && !c.value) c.value = saved[c.dataset.k];
+    c.addEventListener('input', function () { clearTimeout(timer); estado.textContent = 'Escribiendo…'; timer = setTimeout(guardar, 500); });
+  });
+  var f = document.getElementById('fecha');
+  if (!f.value) f.value = hoy();
+
+  window.nuevoDia = function () {
+    campos.forEach(function (c) { c.value = ''; });
+    f.value = hoy();
+    guardar();
+  };
+})();
+</script>
+<script>
+(function () {
+  var campos = Array.prototype.slice.call(document.querySelectorAll('[data-k]'));
+  var MSGS = [
+    ['Hoy pasaste tiempo con Dios y su Palabra. Eso vale más de lo que imaginas. Sigue constante, un día a la vez.', 'Dios se agrada de que lo busques 💛'],
+    ['Leíste, pensaste, oraste y decidiste obedecer. Ese es el camino: no es perfección, es dirección.', 'Tu constancia está sembrando algo grande 🌱'],
+    ['No lo hiciste solo: Dios te acompañó en cada línea. Ahora sal a vivir lo que aprendiste hoy.', 'Que su gracia te sostenga hoy 🙌'],
+    ['Cada día en su Palabra renueva tu manera de pensar. Hoy diste un paso más. ¡Orgulloso de ti!', 'Sigue creciendo, sigue brillando ✨'],
+    ['Tu acción de hoy puede cambiar el día de alguien. Hazla con alegría, no por obligación.', 'Eres luz donde estás 🔥']
+  ];
+  var modal = document.getElementById('fin'), prev = null;
+  function confeti() {
+    var e = ['🎉','🔥','💪','🙌','⭐','🏆'];
+    for (var i = 0; i < 26; i++) {
+      var d = document.createElement('span');
+      d.className = 'conf'; d.textContent = e[i % e.length];
+      d.style.left = Math.random() * 100 + 'vw';
+      d.style.animationDuration = (2 + Math.random() * 2.5) + 's';
+      d.style.animationDelay = (Math.random() * .8) + 's';
+      document.body.appendChild(d);
+      setTimeout(function (x) { x.remove(); }, 5500, d);
+    }
+  }
+  function mostrar() {
+    var m = MSGS[Math.floor(Math.random() * MSGS.length)];
+    document.getElementById('fin-msg').textContent = m[0];
+    document.getElementById('fin-ref').textContent = m[1];
+    modal.classList.add('on'); confeti();
+  }
+  function actualizar() {
+    var n = campos.filter(function (c) { return c.value.trim(); }).length, t = campos.length;
+    document.getElementById('pbar').style.width = (n / t * 100) + '%';
+    document.getElementById('pnum').textContent = n + '/' + t;
+    document.getElementById('ptxt').textContent = n === t ? '🔥 ¡Devo de hoy completo!' : n <= 1 ? 'Empieza tu devo de hoy' : 'Vas muy bien 💪';
+    prev = n;
+  }
+  document.addEventListener('input', actualizar);
+  var preg = document.getElementById('preg');
+  document.getElementById('nuevo').addEventListener('click', function () { preg.classList.add('on'); });
+  document.getElementById('preg-no').addEventListener('click', function () { preg.classList.remove('on'); });
+  preg.addEventListener('click', function (e) { if (e.target === preg) preg.classList.remove('on'); });
+  document.getElementById('preg-si').addEventListener('click', function () {
+    preg.classList.remove('on');
+    document.querySelectorAll('.falta').forEach(function (x) { x.classList.remove('falta'); });
+    window.nuevoDia();
+    actualizar();
+    document.getElementById('estado').textContent = 'Nuevo día listo ✨';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  document.getElementById('preg-pdf').addEventListener('click', function () { preg.classList.remove('on'); descargarPDF(); });
+  document.getElementById('fin-cerrar').addEventListener('click', function () { modal.classList.remove('on'); });
+  modal.addEventListener('click', function (e) { if (e.target === modal) modal.classList.remove('on'); });
+  var JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  function cargarJsPDF() {
+    return new Promise(function (ok, fail) {
+      if (window.jspdf) return ok();
+      var sc = document.createElement('script');
+      sc.src = JSPDF; sc.onload = function () { ok(); }; sc.onerror = function () { fail(new Error('red')); };
+      document.head.appendChild(sc);
+    });
+  }
+  cargarJsPDF().catch(function () {});
+
+  function rgb(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+  function tinte(c) { return c.map(function (v) { return Math.round(v + (255 - v) * 0.78); }); }
+  function limpio(t) { return (t || '').replace(/[^\u0020-\u00FF\n\u2013\u2014\u2018\u2019\u201C\u201D\u2026\u2022]/g, '').trim(); }
+  function val(k) { return limpio(document.querySelector('[data-k="' + k + '"]').value); }
+
+  var SECCIONES = [
+    ['verso', 'VERSÍCULO BANDERA', '#d9a521'],
+    ['mensaje', '1. SOBRE EL MENSAJE (Idea central del autor)', '#1b8fa6'],
+    ['hombre', '2. SOBRE EL HOMBRE (Condición, miedos, necesidad)', '#e07a1f'],
+    ['cristo', '3. SOBRE CRISTO (Evangelio, esperanza, perdón)', '#c0532b'],
+    ['dios', '4. SOBRE DIOS (Carácter, promesas, soberanía)', '#d9a521'],
+    ['notas', 'NOTAS ADICIONALES (Contexto, palabras clave, conexiones)', '#1b8fa6'],
+    ['aprendi', '¿QUÉ APRENDÍ PARA MI VIDA? (Transformación de la mente)', '#3f8f4f'],
+    ['accion', 'UNA ACCIÓN (Paso concreto de obediencia)', '#3f8f4f'],
+    ['oracion', 'UNA ORACIÓN (Confesión o gratitud)', '#1e4d8c']
+  ];
+
+  function crearPDF() {
+    var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var W = 210, H = 297, M = 16, CW = W - 2 * M, y;
+    var oscuro = [20, 33, 61], gris = [110, 120, 135];
+    function hay(h) { if (y + h > H - 18) { doc.addPage(); y = M; } }
+
+    doc.setFillColor.apply(doc, rgb('#1e4d8c')); doc.rect(0, 0, W, 34, 'F');
+    doc.setFillColor.apply(doc, rgb('#c0532b')); doc.rect(0, 34, W, 2.5, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(24);
+    doc.text('DEVOCIONAL DIARIO', W / 2, 17, { align: 'center', charSpace: 1.2 });
+    doc.setFont('helvetica', 'italic'); doc.setFontSize(10.5);
+    doc.text('Lee. Piensa. Ora. Obedece.', W / 2, 27, { align: 'center' });
+
+    y = 48;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold'); doc.setTextColor.apply(doc, rgb('#1e4d8c'));
+    doc.text('PASAJE:', M, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, oscuro);
+    doc.text((val('libro') ? val('libro') + ' ' + val('capitulo') + (val('versiculo') ? ':' + val('versiculo') : '') : '-'), M + 20, y);
+    doc.setFont('helvetica', 'bold'); doc.setTextColor.apply(doc, rgb('#1e4d8c'));
+    doc.text('FECHA:', 125, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor.apply(doc, oscuro);
+    doc.text(val('fecha') || '-', 140, y);
+    doc.setDrawColor(213, 222, 234); doc.setLineWidth(0.5); doc.line(M, y + 3, W - M, y + 3);
+    y += 12;
+
+    SECCIONES.forEach(function (sec) {
+      var col = rgb(sec[2]), texto = val(sec[0]);
+      var lineas = [];
+      (texto || '-').split('\n').forEach(function (l) { doc.setFont('helvetica', 'normal'); doc.setFontSize(11); lineas = lineas.concat(doc.splitTextToSize(l || ' ', CW - 8)); });
+      hay(8 + 6 + 6);
+      doc.setFillColor.apply(doc, tinte(col)); doc.roundedRect(M, y, CW, 8, 1.5, 1.5, 'F');
+      doc.setFillColor.apply(doc, col); doc.roundedRect(M, y, 2.2, 8, 1, 1, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor.apply(doc, oscuro);
+      doc.text(sec[1], M + 5, y + 5.4);
+      y += 13;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+      doc.setTextColor.apply(doc, texto ? oscuro : gris);
+      lineas.forEach(function (l) { hay(6); doc.text(l, M + 4, y); y += 5.6; });
+      y += 6;
+    });
+
+    var n = doc.getNumberOfPages();
+    for (var i = 1; i <= n; i++) {
+      doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, gris);
+      doc.text('Devo Diario  -  ' + i + ' / ' + n, W / 2, H - 8, { align: 'center' });
+    }
+    var f = (document.getElementById('fecha').value || '').replace(/[^0-9A-Za-z]+/g, '-');
+    return { blob: doc.output('blob'), name: 'Devocional-' + (f || 'diario') + '.pdf' };
+  }
+
+  var ETIQ = { libro: 'Libro', capitulo: 'Capítulo', versiculo: 'Versículo', fecha: 'Fecha', verso: 'Versículo bandera', dios: 'Sobre Dios', hombre: 'Sobre el hombre', cristo: 'Sobre Cristo', mensaje: 'Sobre el mensaje', notas: 'Notas adicionales', aprendi: 'Qué aprendí', oracion: 'Oración', accion: 'Acción' };
+  function contenedor(el) { return el.closest('.card') || el.closest('label'); }
+  document.addEventListener('input', function (e) { var c = e.target.closest && contenedor(e.target); if (c) c.classList.remove('falta'); });
+
+  function descargarPDF() {
+    var st = document.getElementById('estado');
+    modal.classList.remove('on');
+    var vacios = Array.prototype.filter.call(document.querySelectorAll('[data-k]'), function (c) { return !c.value.trim(); });
+    document.querySelectorAll('.falta').forEach(function (x) { x.classList.remove('falta'); });
+    if (vacios.length) {
+      vacios.forEach(function (c) { var k = contenedor(c); if (k) k.classList.add('falta'); });
+      vacios[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () { vacios[0].focus({ preventScroll: true }); }, 400);
+      st.textContent = '⚠️ Faltan ' + vacios.length + ' campo' + (vacios.length > 1 ? 's' : '') + ' por llenar: ' + vacios.map(function (c) { return ETIQ[c.dataset.k]; }).join(', ') + '.';
+      return;
+    }
+    st.textContent = 'Generando PDF…';
+    var archivo;
+    cargarJsPDF().then(function () {
+      archivo = crearPDF();
+      return window.claude && window.claude.use ? window.claude.use('downloads') : null;
+    }).then(function (dl) {
+      if (!dl) {
+        var u = URL.createObjectURL(archivo.blob), a = document.createElement('a');
+        a.href = u; a.download = archivo.name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(u); }, 1500);
+        st.textContent = 'PDF descargado ✓ (revisa tus descargas)';
+        mostrar();
+        return;
+      }
+      return dl.save({ filename: archivo.name, data: archivo.blob }).then(function () {
+        st.textContent = 'PDF descargado ✓ (revisa tus descargas)';
+        mostrar();
+      }, function (err) {
+        st.textContent = err && err.code === 'declined' ? 'Descarga cancelada.' : 'No se pudo guardar el PDF. Inténtalo de nuevo.';
+      });
+    }).catch(function () {
+      st.textContent = 'No se pudo generar el PDF. Revisa tu conexión a internet e inténtalo de nuevo.';
+    });
+  }
+  document.getElementById('pdf').addEventListener('click', descargarPDF);
+  actualizar();
+})();
+</script>
+<script>
+(function () {
+  // Cantidad de versículos de cada capítulo, por libro (Biblia Reina-Valera)
+  var VC = {"Génesis":"31,25,24,26,32,22,24,22,29,32,32,20,18,24,21,16,27,33,38,18,34,24,20,67,34,35,46,22,35,43,55,32,20,31,29,43,36,30,23,23,57,38,34,34,28,34,31,22,33,26","Éxodo":"22,25,22,31,23,30,25,32,35,29,10,51,22,31,27,36,16,27,25,26,36,31,33,18,40,37,21,43,46,38,18,35,23,35,35,38,29,31,43,38","Levítico":"17,16,17,35,19,30,38,36,24,20,47,8,59,57,33,34,16,30,37,27,24,33,44,23,55,46,34","Números":"54,34,51,49,31,27,89,26,23,36,35,16,33,45,41,50,13,32,22,29,35,41,30,25,18,65,23,31,40,16,54,42,56,29,34,13","Deuteronomio":"46,37,29,49,33,25,26,20,29,22,32,32,18,29,23,22,20,22,21,20,23,30,25,22,19,19,26,68,29,20,30,52,29,12","Josué":"18,24,17,24,15,27,26,35,27,43,23,24,33,15,63,10,18,28,51,9,45,34,16,33","Jueces":"36,23,31,24,31,40,25,35,57,18,40,15,25,20,20,31,13,31,30,48,25","Rut":"22,23,18,22","1 Samuel":"28,36,21,22,12,21,17,22,27,27,15,25,23,52,35,23,58,30,24,42,15,23,29,22,44,25,12,25,11,31,13","2 Samuel":"27,32,39,12,25,23,29,18,13,19,27,31,39,33,37,23,29,33,43,26,22,51,39,25","1 Reyes":"53,46,28,34,18,38,51,66,28,29,43,33,34,31,34,34,24,46,21,43,29,53","2 Reyes":"18,25,27,44,27,33,20,29,37,36,21,21,25,29,38,20,41,37,37,21,26,20,37,20,30","1 Crónicas":"54,55,24,43,26,81,40,40,44,14,47,40,14,17,29,43,27,17,19,8,30,19,32,31,31,32,34,21,30","2 Crónicas":"17,18,17,22,14,42,22,18,31,19,23,16,22,15,19,14,19,34,11,37,20,12,21,27,28,23,9,27,36,27,21,33,25,33,27,23","Esdras":"11,70,13,24,17,22,28,36,15,44","Nehemías":"11,20,32,23,19,19,73,18,38,39,36,47,31","Ester":"22,23,15,17,14,14,10,17,32,3","Job":"22,13,26,21,27,30,21,22,35,22,20,25,28,22,35,22,16,21,29,29,34,30,17,25,6,14,23,28,25,31,40,22,33,37,16,33,24,41,30,24,34,17","Salmos":"6,12,8,8,12,10,17,9,20,18,7,8,6,7,5,11,15,50,14,9,13,31,6,10,22,12,14,9,11,12,24,11,22,22,28,12,40,22,13,17,13,11,5,26,17,11,9,14,20,23,19,9,6,7,23,13,11,11,17,12,8,12,11,10,13,20,7,35,36,5,24,20,28,23,10,12,20,72,13,19,16,8,18,12,13,17,7,18,52,17,16,15,5,23,11,13,12,9,9,5,8,28,22,35,45,48,43,13,31,7,10,10,9,8,18,19,2,29,176,7,8,9,4,8,5,6,5,6,8,8,3,18,3,3,21,26,9,8,24,13,10,7,12,15,21,10,20,14,9,6","Proverbios":"33,22,35,27,23,35,27,36,18,32,31,28,25,35,33,33,28,24,29,30,31,29,35,34,28,28,27,28,27,33,31","Eclesiastés":"18,26,22,16,20,12,29,17,18,20,10,14","Cantares":"17,17,11,16,16,13,13,14","Isaías":"31,22,26,6,30,13,25,22,21,34,16,6,22,32,9,14,14,7,25,6,17,25,18,23,12,21,13,29,24,33,9,20,24,17,10,22,38,22,8,31,29,25,28,28,25,13,15,22,26,11,23,15,12,17,13,12,21,14,21,22,11,12,19,12,25,24","Jeremías":"19,37,25,31,31,30,34,22,26,25,23,17,27,22,21,21,27,23,15,18,14,30,40,10,38,24,22,17,32,24,40,44,26,22,19,32,21,28,18,16,18,22,13,30,5,28,7,47,39,46,64,34","Lamentaciones":"22,22,66,22,22","Ezequiel":"28,10,27,17,17,14,27,18,11,22,25,28,23,23,8,63,24,32,14,49,32,31,49,27,17,21,36,26,21,26,18,32,33,31,15,38,28,23,29,49,26,20,27,31,25,24,23,35","Daniel":"21,49,30,37,31,28,28,27,27,21,45,13","Oseas":"11,23,5,19,15,11,16,14,17,15,12,14,16,9","Joel":"20,32,21","Amós":"15,16,15,13,27,14,17,14,15","Abdías":"21","Jonás":"17,10,10,11","Miqueas":"16,13,12,13,15,16,20","Nahúm":"15,13,19","Habacuc":"17,20,19","Sofonías":"18,15,20","Hageo":"15,23","Zacarías":"21,13,10,14,11,15,14,23,17,12,17,14,9,21","Malaquías":"14,17,18,6","Mateo":"25,23,17,25,48,34,29,34,38,42,30,50,58,36,39,28,27,35,30,34,46,46,39,51,46,75,66,20","Marcos":"45,28,35,41,43,56,37,38,50,52,33,44,37,72,47,20","Lucas":"80,52,38,44,39,49,50,56,62,42,54,59,35,35,32,31,37,43,48,47,38,71,56,53","Juan":"51,25,36,54,47,71,53,59,41,42,57,50,38,31,27,33,26,40,42,31,25","Hechos":"26,47,26,37,42,15,60,40,43,48,30,25,52,28,41,40,34,28,41,38,40,30,35,27,27,32,44,31","Romanos":"32,29,31,25,21,23,25,39,33,21,36,21,14,23,33,27","1 Corintios":"31,16,23,21,13,20,40,13,27,33,34,31,13,40,58,24","2 Corintios":"24,17,18,18,21,18,16,24,15,18,33,21,14","Gálatas":"24,21,29,31,26,18","Efesios":"23,22,21,32,33,24","Filipenses":"30,30,21,23","Colosenses":"29,23,25,18","1 Tesalonicenses":"10,20,13,18,28","2 Tesalonicenses":"12,17,18","1 Timoteo":"20,15,16,16,25,21","2 Timoteo":"18,26,17,22","Tito":"16,15,15","Filemón":"25","Hebreos":"14,18,19,16,14,20,28,13,28,39,40,29,25","Santiago":"27,26,18,17,20","1 Pedro":"25,25,22,19,14","2 Pedro":"21,22,18","1 Juan":"10,29,24,21,21","2 Juan":"13","3 Juan":"14","Judas":"25","Apocalipsis":"20,29,22,11,14,17,17,13,21,11,19,17,18,20,8,21,18,24,21,15,27,21"};
+  var f = document.getElementById('fecha');
+  var lib = document.getElementById('libro'), cap = document.getElementById('capitulo'), ver = document.getElementById('versiculo');
+  f.readOnly = true;
+  function pad(n) { return ('0' + n).slice(-2); }
+  function disparar(el) { el.dispatchEvent(new Event('input', { bubbles: true })); }
+  function maxCap() { var o = lib.options[lib.selectedIndex]; return o && o.dataset.c ? +o.dataset.c : 0; }
+  function maxVer() {
+    var l = VC[lib.value], c = +cap.value;
+    return l && c ? (+l.split(',')[c - 1] || 0) : 0;
+  }
+  function ajustarVer() {
+    var m = maxVer();
+    ver.placeholder = m ? '1 a ' + m : 'Ej. 28 o 1-3';
+    if (m && ver.value) {
+      var n = ver.value.replace(/\d+/g, function (x) { return Math.max(1, Math.min(m, +x)); });
+      if (n !== ver.value) { ver.value = n; disparar(ver); }
+    }
+  }
+  function limites() {
+    var m = maxCap();
+    cap.placeholder = m ? '1 a ' + m : 'Ej. 8';
+    if (m && +cap.value > m) { cap.value = m; disparar(cap); }
+    ajustarVer();
+  }
+  lib.addEventListener('change', limites);
+  cap.addEventListener('input', function () {
+    cap.value = cap.value.replace(/\D/g, '').replace(/^0+/, '');
+    var m = maxCap(); if (m && +cap.value > m) cap.value = m;
+    ajustarVer();
+  });
+  ver.addEventListener('input', function () {
+    ver.value = ver.value.replace(/[^0-9,\-]/g, '');
+    ajustarVer();
+  });
+
+  function pintar() {
+    var d = new Date(), corta = pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear();
+    if (f.value !== corta) { f.value = corta; disparar(f); }
+  }
+  limites();
+  pintar();
+  setInterval(pintar, 30000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) pintar(); });
+  window.addEventListener('focus', pintar);
+})();
+</script>
+</body>
+</html>
